@@ -35,6 +35,11 @@ doc.add_paragraph(
     "Second, I packaged the entire architecture into an 'AI Skill' for agentic coding IDEs like Claude Code. By open-sourcing the repository with a dedicated SKILL.md file, any developer can install the tool and instruct their own local AI to autonomously drive the background Python scripts. It turns the codebase into an executable tool that an AI can use natively in a chat window."
 )
 
+doc.add_heading("Hardening the Agent: Bypassing Bot Detection", level=2)
+doc.add_paragraph(
+    "One of the biggest technical hurdles in modern web automation is the proliferation of anti-bot solutions like Cloudflare Turnstile. To ensure the agent's reliability, I integrated 'playwright-stealth' to mask automation signatures, such as the webdriver property and specialized navigator objects. Furthermore, I designed the system to be 'hybrid-aware'—if a CAPTCHA is encountered, the agent can signal for manual intervention in the visible browser window, seamlessly combining AI efficiency with human problem-solving."
+)
+
 doc.add_heading("Conclusion", level=2)
 doc.add_paragraph(
     "Building this end-to-end system—from the autonomous web scraper to the reactive UI and the agentic skill package—demonstrates my deep technical execution, systems thinking, and passion for automation. I look forward to bringing this same builder's mindset and drive for efficiency to your team."
