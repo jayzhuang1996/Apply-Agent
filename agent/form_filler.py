@@ -9,7 +9,7 @@ import re
 from pathlib import Path
 from openai import OpenAI
 from playwright.sync_api import sync_playwright, Page, TimeoutError as PWTimeout
-from playwright_stealth import stealth_sync
+from playwright_stealth import stealth
 
 from agent.field_answerer import answer_field
 from agent.llm_client import get_client
@@ -88,7 +88,7 @@ def fill_and_submit_headless(
     browser = playwright_ctx.chromium.launch(headless=False)
     context = browser.new_context(no_viewport=True)
     page = context.new_page()
-    stealth_sync(page)
+    stealth(page)
 
     log_fn(f"Opening form: {apply_url}")
     page.goto(apply_url, wait_until="domcontentloaded", timeout=60000)
@@ -197,7 +197,7 @@ def fill_and_submit(
         browser = p.chromium.launch(headless=False)
         context = browser.new_context(no_viewport=True)
         page = context.new_page()
-        stealth_sync(page)
+        stealth(page)
 
         print(f"Opening form: {apply_url}")
         page.goto(apply_url, wait_until="domcontentloaded", timeout=60000)
