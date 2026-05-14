@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* === VIEWPORT BASE === */
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+}
+html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+.slide {
+  width: 100vw; height: 100vh; height: 100dvh;
+  overflow: hidden; scroll-snap-align: start;
+  display: flex; flex-direction: column; position: relative;
+}
+:root {
+  --title-size: clamp(2.8rem, 7vw, 6.5rem);
+  --h2-size: clamp(1.4rem, 3vw, 2.2rem);
+  --body-size: clamp(0.875rem, 1.4vw, 1.05rem);
+  --small-size: clamp(0.75rem, 1vw, 0.875rem);
+  --slide-padding: clamp(2rem, 6vw, 7rem);
+
+  /* Opendoor palette — navy blue */
+  --coral: #1A3A5C;
+  --coral-dark: #122840;
+  --ink: #1A1A1A;
+  --gray-mid: #6B6B6B;
+  --gray-light: #F2F0EC;
+  --border: #E2E0DC;
+  --white: #FFFFFF;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2ms !important; }
+}
+
+/* === RESET === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--ink); }
+
+/* === NAV === */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--slide-padding);
+  height: clamp(52px, 7vh, 72px);
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  color: var(--ink); text-decoration: none; letter-spacing: -0.02em;
+}
+
+/* === SLIDE 1 — HERO INPUT === */
+#slide-main {
+  background: var(--white);
+  padding-top: clamp(52px, 7vh, 72px);
+}
+.hero-inner {
+  flex: 1; display: flex; flex-direction: row;
+  align-items: stretch; overflow: hidden;
+}
+.hero-left {
+  flex: 0 0 55%; display: flex; flex-direction: column;
+  justify-content: center;
+  padding: clamp(2rem, 5vw, 5rem) var(--slide-padding);
+  padding-right: clamp(1.5rem, 3vw, 4rem);
+  border-right: 1px solid var(--border);
+}
+.hero-eyebrow {
+  font-size: var(--small-size); font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--coral); margin-bottom: clamp(0.75rem, 1.5vh, 1.25rem);
+}
+.hero-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: var(--title-size); line-height: 1.02;
+  letter-spacing: -0.03em; color: var(--ink);
+  margin-bottom: clamp(1.25rem, 2.5vh, 2rem);
+}
+.hero-title em { color: var(--coral); font-style: italic; }
+.hero-sub {
+  font-size: var(--body-size); color: var(--gray-mid);
+  line-height: 1.55; max-width: 38ch;
+  margin-bottom: clamp(1.5rem, 3vh, 2.5rem);
+}
+.how-link {
+  font-size: var(--small-size); color: var(--gray-mid);
+  text-decoration: underline; cursor: pointer; margin-top: clamp(1rem, 2vh, 1.75rem);
+  display: inline-block; transition: color 0.2s;
+}
+.how-link:hover { color: var(--coral); }
+
+/* === INPUT PANEL (right) === */
+.hero-right {
+  flex: 1; display: flex; flex-direction: column;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 4rem) var(--slide-padding);
+  padding-left: clamp(2rem, 4vw, 5rem);
+  gap: clamp(1rem, 2vh, 1.5rem);
+  overflow-y: auto;
+}
+.field-label {
+  font-size: var(--small-size); font-weight: 600;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--gray-mid); margin-bottom: 6px; display: block;
+}
+.drop-zone {
+  border: 2px dashed var(--border); border-radius: 10px;
+  padding: clamp(1rem, 2.5vh, 1.75rem) 1.5rem;
+  text-align: center; cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+}
+.drop-zone:hover, .drop-zone.dragover {
+  border-color: var(--coral); background: rgba(224,92,58,0.04);
+}
+.drop-zone input[type=file] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%;
+}
+.drop-icon { font-size: clamp(1.25rem, 2vw, 1.6rem); margin-bottom: 6px; }
+.drop-text { font-size: var(--small-size); color: var(--gray-mid); line-height: 1.4; }
+.drop-text strong { color: var(--ink); }
+.drop-filename {
+  font-size: var(--small-size); color: var(--coral);
+  font-weight: 500; margin-top: 4px;
+}
+.text-input {
+  width: 100%; padding: 11px 14px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: var(--body-size);
+  color: var(--ink); background: var(--white);
+  transition: border-color 0.18s, box-shadow 0.18s;
+  outline: none;
+}
+.text-input::placeholder { color: #B0ADA8; }
+.text-input:focus {
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px rgba(224,92,58,0.1);
+}
+textarea.text-input { resize: none; line-height: 1.5; }
+.run-btn {
+  width: 100%; padding: clamp(11px, 1.8vh, 15px) 24px;
+  background: var(--coral); color: var(--white);
+  border: none; border-radius: 8px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+  font-weight: 600; letter-spacing: -0.01em;
+  transition: background 0.18s, transform 0.12s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.run-btn:hover:not(:disabled) { background: var(--coral-dark); }
+.run-btn:active:not(:disabled) { transform: scale(0.99); }
+.run-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.run-btn .spinner {
+  width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: white; border-radius: 50%;
+  animation: spin 0.7s linear infinite; display: none;
+}
+.run-btn.loading .spinner { display: block; }
+.run-btn.loading .btn-text { opacity: 0.7; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* === SLIDE 2 — RESULTS & SETUP (modal-style overlay) === */
+#results-overlay, #setup-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+  display: none; align-items: flex-start; justify-content: center;
+  overflow-y: auto; padding: clamp(1rem, 3vh, 2.5rem);
+}
+#results-overlay.open, #setup-overlay.open { display: flex; }
+.results-panel {
+  background: var(--white); border-radius: 16px;
+  width: min(92vw, 900px);
+  margin: auto;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.18);
+  animation: slideUp 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.results-header {
+  padding: clamp(1.25rem, 3vh, 2rem) clamp(1.5rem, 4vw, 2.5rem);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.results-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  letter-spacing: -0.02em; color: var(--ink);
+}
+.close-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1.5px solid var(--border); background: none;
+  cursor: pointer; font-size: 1.1rem; color: var(--gray-mid);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.close-btn:hover { background: var(--gray-light); color: var(--ink); }
+
+.results-body { padding: clamp(1.25rem, 3vh, 2rem) clamp(1.5rem, 4vw, 2.5rem); }
+
+/* Log */
+.log-section { margin-bottom: clamp(1rem, 2vh, 1.75rem); }
+.section-heading {
+  font-size: var(--small-size); font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gray-mid); margin-bottom: 8px;
+}
+.log-box {
+  background: #FAFAF8; border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: clamp(0.7rem, 1vw, 0.8rem); color: #444;
+  line-height: 1.7; max-height: 130px; overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+/* Two-col review */
+.review-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  margin-bottom: clamp(1rem, 2vh, 1.75rem);
+}
+@media (max-width: 640px) { .review-grid { grid-template-columns: 1fr; } }
+
+.fields-table {
+  width: 100%; border-collapse: collapse; font-size: var(--small-size);
+}
+.fields-table th {
+  text-align: left; padding: 8px 10px;
+  background: var(--gray-light); color: var(--gray-mid);
+  font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; border-bottom: 1px solid var(--border);
+}
+.fields-table td {
+  padding: 8px 10px; border-bottom: 1px solid #F0EEE9;
+  vertical-align: top; color: var(--ink); line-height: 1.4;
+}
+.fields-table td:first-child { color: var(--gray-mid); white-space: nowrap; }
+.fields-table tr:last-child td { border-bottom: none; }
+
+.feedback-box {
+  background: #FAFAF8; border: 1px solid var(--border); border-radius: 8px;
+  padding: 12px 14px; font-size: var(--small-size);
+  color: #444; line-height: 1.7; max-height: 220px; overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+
+
+/* Decision bar */
+.decision-bar {
+  border-top: 1px solid var(--border);
+  padding: clamp(1rem, 2.5vh, 1.5rem) clamp(1.5rem, 4vw, 2.5rem);
+  display: flex; align-items: center; gap: 12px;
+}
+.submit-btn {
+  padding: 11px 28px; background: var(--ink); color: var(--white);
+  border: none; border-radius: 8px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: var(--body-size);
+  font-weight: 600; transition: background 0.18s;
+}
+.submit-btn:hover:not(:disabled) { background: #333; }
+.submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.cancel-btn {
+  padding: 11px 24px; background: none; color: var(--ink);
+  border: 1.5px solid var(--border); border-radius: 8px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: var(--body-size);
+  font-weight: 500; transition: border-color 0.18s;
+}
+.cancel-btn:hover:not(:disabled) { border-color: #999; }
+.cancel-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.decision-msg {
+  font-size: var(--body-size); font-weight: 500;
+  color: var(--coral); margin-left: auto;
+}
+
+/* === HOW IT WORKS — info modal === */
+#how-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center; padding: 2rem;
+}
+#how-overlay.open { display: flex; }
+.how-panel {
+  background: var(--white); border-radius: 16px;
+  width: min(90vw, 560px); padding: clamp(1.5rem, 4vw, 2.5rem);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.18);
+  animation: slideUp 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.how-panel h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.3rem, 2.5vw, 1.8rem); margin-bottom: 1.25rem;
+  letter-spacing: -0.02em;
+}
+.how-step {
+  display: flex; gap: 14px; margin-bottom: 1rem; align-items: flex-start;
+}
+.how-num {
+  flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--coral); color: white;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.how-text { font-size: var(--body-size); color: var(--ink); line-height: 1.55; }
+.how-text strong { font-weight: 600; }
+.how-close {
+  margin-top: 1.5rem; width: 100%; padding: 11px;
+  background: var(--gray-light); color: var(--ink);
+  border: none; border-radius: 8px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: var(--body-size); font-weight: 500;
+  transition: background 0.15s;
+}
+.how-close:hover { background: var(--border); }
+
+/* === ANIMATIONS === */
+.fade-in { animation: fadeIn 0.5s ease both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.hero-eyebrow { animation: fadeIn 0.45s 0.05s ease both; }
+.hero-title    { animation: fadeIn 0.55s 0.12s ease both; }
+.hero-sub      { animation: fadeIn 0.55s 0.2s ease both; }
+.hero-right    { animation: fadeIn 0.55s 0.28s ease both; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Apply Agent</a>
+</nav>
+
+<!-- SLIDE 1 — MAIN -->
+<div class="slide" id="slide-main">
+  <div class="hero-inner">
+
+    <!-- LEFT: headline -->
+    <div class="hero-left">
+      <div class="hero-eyebrow">AI-powered job applications</div>
+      <h1 class="hero-title">Apply with<br><em>confidence.</em></h1>
+      <p class="hero-sub">
+        Drop your resume and a job URL. The agent reads the role,
+        fills the entire application form, and waits for your
+        confirmation before submitting — nothing goes out without you.
+      </p>
+      <span class="how-link" onclick="openHow()">How does this work? →</span>
+    </div>
+
+    <!-- RIGHT: inputs -->
+    <div class="hero-right">
+
+      <div>
+        <label class="field-label">Your Resume</label>
+        <div class="drop-zone" id="drop-zone">
+          <input type="file" id="resume-input" accept=".docx,.pdf" onchange="handleFile(this, 'drop-filename', 'drop-zone')">
+          <div class="drop-icon">↑</div>
+          <div class="drop-text"><strong>Drop file here</strong> or click to browse<br>.docx or .pdf</div>
+          <div class="drop-filename" id="drop-filename"></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 1rem;">
+        <label class="field-label">Cover Letter <span style="font-weight:400;text-transform:none;font-size:11px;color:#B0ADA8;">optional</span></label>
+        <div class="drop-zone" id="cl-drop-zone" style="padding: 1rem; min-height: auto;">
+          <input type="file" id="cl-input" accept=".docx,.pdf" onchange="handleFile(this, 'cl-drop-filename', 'cl-drop-zone')">
+          <div class="drop-text" style="font-size: 12px;"><strong>Drop cover letter</strong> or click<br>.docx or .pdf</div>
+          <div class="drop-filename" id="cl-drop-filename"></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 1rem;">
+        <label class="field-label">Job Posting URL</label>
+        <input class="text-input" id="job-url" type="text"
+          placeholder="https://ats.rippling.com/en-CA/opendoor/jobs/...">
+      </div>
+
+      <div>
+        <label class="field-label">Tailoring Notes <span style="font-weight:400;text-transform:none;font-size:11px;color:#B0ADA8;">optional</span></label>
+        <textarea class="text-input" id="tailoring" rows="3"
+          placeholder="e.g. Lead with AI project work. Connect predictive maintenance to Opendoor AI Ops."></textarea>
+      </div>
+
+      <button class="run-btn" id="run-btn" onclick="runAgent()">
+        <div class="spinner"></div>
+        <span class="btn-text">Run Agent →</span>
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS OVERLAY (modal) -->
+<div id="results-overlay">
+  <div class="results-panel">
+
+    <div class="results-header">
+      <div class="results-title" id="results-title">Agent Results</div>
+      <button class="close-btn" onclick="closeResults()">✕</button>
+    </div>
+
+    <div class="results-body">
+
+      <!-- Log -->
+      <div class="log-section">
+        <div class="section-heading">Live Log</div>
+        <div class="log-box" id="log-box">Waiting for agent to start...</div>
+      </div>
+
+
+
+      <!-- Review grid: fields + feedback -->
+      <div class="review-grid">
+        <div>
+          <div class="section-heading">Fields Filled</div>
+          <table class="fields-table" id="fields-table">
+            <thead><tr><th>Field</th><th>Value</th></tr></thead>
+            <tbody id="fields-body"></tbody>
+          </table>
+        </div>
+        <div>
+          <div class="section-heading">Resume Suggestions — Before → After</div>
+          <div class="feedback-box" id="feedback-box"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Decision bar -->
+    <div class="decision-bar" style="justify-content: space-between;">
+      <div style="display: flex; gap: 12px;">
+        <button class="submit-btn" id="submit-btn" onclick="submitApp()" disabled>Submit Application</button>
+        <button class="cancel-btn" id="edit-btn" onclick="openEditModal()" disabled>Edit Fields</button>
+        <button class="cancel-btn" id="replace-btn" onclick="openReplaceModal()" disabled>Replace Resume</button>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span class="decision-msg" id="decision-msg"></span>
+        <button class="cancel-btn" id="cancel-btn" onclick="cancelApp()" disabled>Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SETUP OVERLAY (modal) -->
+<div id="setup-overlay">
+  <div class="results-panel" style="width: min(90vw, 600px);">
+    <div class="results-header">
+      <div class="results-title">Additional Information</div>
+      <button class="close-btn" onclick="closeSetup()">✕</button>
+    </div>
+    <div class="results-body">
+      <p style="font-size: var(--body-size); color: var(--gray-mid); margin-bottom: 1.5rem;">
+        Please provide a few details your resume doesn't answer so the agent can fill out the application accurately.
+      </p>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label class="field-label">Notice Period</label>
+          <input class="text-input" id="setup-notice" type="text" placeholder="e.g. 2 weeks">
+        </div>
+        <div>
+          <label class="field-label">Desired Salary</label>
+          <input class="text-input" id="setup-salary" type="text" placeholder="e.g. 130000">
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+          <label class="field-label">Auth. to Work in Canada?</label>
+          <select class="text-input" id="setup-auth-canada">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Require Sponsorship?</label>
+          <select class="text-input" id="setup-sponsorship">
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-heading">EEO Questions (Optional)</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+        <div>
+          <label class="field-label">Gender</label>
+          <select class="text-input" id="setup-gender">
+            <option value="">Select...</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Non-Binary">Non-Binary</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Race / Ethnicity</label>
+          <select class="text-input" id="setup-race">
+            <option value="">Select...</option>
+            <option value="White">White</option>
+            <option value="Hispanic or Latino">Hispanic or Latino</option>
+            <option value="Black or African American">Black or African American</option>
+            <option value="Asian">Asian</option>
+            <option value="Native Hawaiian or Other Pacific Islander">Native Hawaiian or Other Pacific Islander</option>
+            <option value="American Indian or Alaska Native">American Indian or Alaska Native</option>
+            <option value="Two or More Races">Two or More Races</option>
+            <option value="Prefer not to say">Prefer not to say</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Veteran Status</label>
+          <select class="text-input" id="setup-veteran">
+            <option value="">Select...</option>
+            <option value="I am not a protected veteran">I am not a protected veteran</option>
+            <option value="I identify as one or more of the classifications of a protected veteran">I identify as a protected veteran</option>
+            <option value="I don't wish to answer">I don't wish to answer</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Disability Status</label>
+          <select class="text-input" id="setup-disability">
+            <option value="">Select...</option>
+            <option value="Yes, I have a disability (or previously had a disability)">Yes, I have a disability</option>
+            <option value="No, I don't have a disability">No, I don't have a disability</option>
+            <option value="I don't wish to answer">I don't wish to answer</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="decision-bar">
+      <button class="submit-btn" onclick="startPipeline()">Continue to Run Agent</button>
+      <button class="cancel-btn" onclick="closeSetup()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT FIELD MODAL -->
+<div id="edit-overlay" style="position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: 2rem;">
+  <div class="results-panel" style="width: min(90vw, 500px); padding: 2rem;">
+    <h2 style="font-family: 'DM Serif Display', serif; font-size: 1.5rem; margin-bottom: 1rem; color: var(--ink);">Edit Field</h2>
+    <div style="margin-bottom: 1rem;">
+      <label class="field-label">Select Field to Edit</label>
+      <select class="text-input" id="edit-field-name" style="appearance: auto; cursor: pointer;"></select>
+    </div>
+    <div style="margin-bottom: 1.5rem;">
+      <label class="field-label">New Value</label>
+      <input class="text-input" id="edit-field-value" type="text" placeholder="e.g. Jonathan">
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <button class="submit-btn" onclick="submitEdit()">Apply Change</button>
+      <button class="cancel-btn" onclick="closeEditModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- REPLACE RESUME MODAL -->
+<div id="replace-overlay" style="position: fixed; inset: 0; z-index: 400; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; padding: 2rem;">
+  <div class="results-panel" style="width: min(90vw, 500px); padding: 2rem;">
+    <h2 style="font-family: 'DM Serif Display', serif; font-size: 1.5rem; margin-bottom: 1rem; color: var(--ink);">Replace Resume</h2>
+    <div style="margin-bottom: 1.5rem;">
+      <label class="field-label">New Resume File</label>
+      <input type="file" id="replace-resume-input" accept=".docx,.pdf" style="margin-top: 0.5rem;">
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <button class="submit-btn" onclick="submitReplace()">Upload & Replace</button>
+      <button class="cancel-btn" onclick="closeReplaceModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS MODAL -->
+<div id="how-overlay" onclick="closeHow(event)">
+  <div class="how-panel">
+    <h2>How it works</h2>
+    <div class="how-step">
+      <div class="how-num">1</div>
+      <div class="how-text"><strong>Drop your resume</strong> (.docx or .pdf) and paste the job posting URL.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">2</div>
+      <div class="how-text"><strong>The agent reads the job description</strong> and uses your profile to fill every field — text, dropdowns, EEO, file upload.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">3</div>
+      <div class="how-text"><strong>Review everything</strong> — every field filled, a screenshot of the form, and AI suggestions for improving your resume for this role.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">4</div>
+      <div class="how-text"><strong>You decide.</strong> Nothing submits without your explicit confirmation.</div>
+    </div>
+    <button class="how-close" onclick="closeHow()">Got it</button>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:8000';
+
+// ── Initialization ────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res = await fetch(`${API}/profile`);
+    if (res.ok) {
+      const p = await res.json();
+      if (p.current && p.current.notice_period) document.getElementById('setup-notice').value = p.current.notice_period;
+      if (p.compensation && p.compensation.desired_salary_cad) document.getElementById('setup-salary').value = p.compensation.desired_salary_cad;
+      
+      if (p.work_authorization) {
+        if (p.work_authorization.canada !== undefined) document.getElementById('setup-auth-canada').value = p.work_authorization.canada ? 'yes' : 'no';
+        if (p.work_authorization.requires_sponsorship !== undefined) document.getElementById('setup-sponsorship').value = p.work_authorization.requires_sponsorship ? 'yes' : 'no';
+      }
+      
+      if (p.eeo) {
+        if (p.eeo.gender) document.getElementById('setup-gender').value = p.eeo.gender;
+        if (p.eeo.race_ethnicity) document.getElementById('setup-race').value = p.eeo.race_ethnicity;
+        if (p.eeo.veteran_status) document.getElementById('setup-veteran').value = p.eeo.veteran_status;
+        if (p.eeo.disability_status) document.getElementById('setup-disability').value = p.eeo.disability_status;
+      }
+    }
+  } catch (err) {
+    console.error('Failed to load profile', err);
+  }
+});
+
+// ── File drop ─────────────────────────────────────────────────────────────────
+function handleFile(input, filenameId = 'drop-filename', dropZoneId = 'drop-zone') {
+  if (input.files && input.files[0]) {
+    document.getElementById(filenameId).textContent = input.files[0].name;
+    document.getElementById(dropZoneId).style.borderColor = 'var(--coral)';
+  }
+}
+
+const dropZone = document.getElementById('drop-zone');
+const clDropZone = document.getElementById('cl-drop-zone');
+
+[dropZone, clDropZone].forEach(zone => {
+  if (!zone) return;
+  zone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    zone.classList.add('dragover');
+  });
+  zone.addEventListener('dragleave', () => {
+    zone.classList.remove('dragover');
+  });
+  zone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    const input = zone.querySelector('input[type="file"]');
+    const filenameId = zone.querySelector('.drop-filename').id;
+    if (e.dataTransfer.files.length) {
+      input.files = e.dataTransfer.files;
+      handleFile(input, filenameId, zone.id);
+    }
+  });
+});
+
+// ── Run agent ─────────────────────────────────────────────────────────────────
+async function runAgent() {
+  const resumeInput = document.getElementById('resume-input');
+  const clInput = document.getElementById('cl-input');
+  const jobUrl = document.getElementById('job-url').value.trim();
+
+  if (!resumeInput.files[0]) { alert('Please upload a resume file.'); return; }
+  if (!jobUrl) { alert('Please enter a job URL.'); return; }
+
+  // Show setup modal first
+  document.getElementById('setup-overlay').classList.add('open');
+}
+
+function closeSetup() {
+  document.getElementById('setup-overlay').classList.remove('open');
+}
+
+async function startPipeline() {
+  closeSetup();
+  
+  const resumeInput = document.getElementById('resume-input');
+  const jobUrl = document.getElementById('job-url').value.trim();
+  const tailoring = document.getElementById('tailoring').value.trim();
+
+
+  // Show loading state
+  const btn = document.getElementById('run-btn');
+  btn.disabled = true; btn.classList.add('loading');
+  btn.querySelector('.btn-text').textContent = 'Running...';
+
+  // Open results overlay immediately
+  openResults('Running agent...');
+  document.getElementById('log-box').textContent = 'Starting pipeline...\n';
+
+  // Upload resume + cover letter + kick off pipeline
+  const form = new FormData();
+  form.append('resume', resumeInput.files[0]);
+  
+  const clInput = document.getElementById('cl-input');
+  if (clInput.files && clInput.files[0]) {
+    form.append('cover_letter', clInput.files[0]);
+  }
+  
+  form.append('job_url', jobUrl);
+  form.append('tailoring_notes', tailoring);
+  
+  // Broad questions overrides
+  form.append('notice_period', document.getElementById('setup-notice').value.trim());
+  form.append('desired_salary', document.getElementById('setup-salary').value.trim());
+  form.append('authorized_canada', document.getElementById('setup-auth-canada').value);
+  form.append('requires_sponsorship', document.getElementById('setup-sponsorship').value);
+  form.append('gender', document.getElementById('setup-gender').value.trim());
+  form.append('race_ethnicity', document.getElementById('setup-race').value.trim());
+  form.append('veteran_status', document.getElementById('setup-veteran').value.trim());
+  form.append('disability_status', document.getElementById('setup-disability').value.trim());
+
+  try {
+    // Start pipeline (returns immediately, streams via SSE)
+    const startRes = await fetch(`${API}/run`, { method: 'POST', body: form });
+    const { session_id } = await startRes.json();
+
+    // Stream log via SSE
+    const es = new EventSource(`${API}/stream/${session_id}`);
+    const logEl = document.getElementById('log-box');
+
+    es.onmessage = e => {
+      const data = JSON.parse(e.data);
+
+      if (data.type === 'log') {
+        logEl.textContent += data.msg + '\n';
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      if (data.type === 'done') {
+        es.close();
+        populateResults(data.result);
+        btn.disabled = false; btn.classList.remove('loading');
+        btn.querySelector('.btn-text').textContent = 'Run Agent →';
+      }
+
+      if (data.type === 'error') {
+        es.close();
+        logEl.textContent += `\nERROR: ${data.msg}`;
+        btn.disabled = false; btn.classList.remove('loading');
+        btn.querySelector('.btn-text').textContent = 'Run Agent →';
+      }
+    };
+
+    es.onerror = () => {
+      es.close();
+      logEl.textContent += '\nConnection lost.';
+      btn.disabled = false; btn.classList.remove('loading');
+    };
+
+  } catch (err) {
+    document.getElementById('log-box').textContent = `Error: ${err.message}`;
+    btn.disabled = false; btn.classList.remove('loading');
+    btn.querySelector('.btn-text').textContent = 'Run Agent →';
+  }
+}
+
+function populateResults(result) {
+  document.getElementById('results-title').textContent = result.job_title 
+    ? `${result.job_title} @ ${result.company}` 
+    : 'Agent Finished';
+  document.getElementById('results-overlay').classList.add('open');
+  
+  // Store fields globally for the edit modal
+  window.currentFields = result.filled_fields || [];
+
+  // Table
+  const tbody = document.getElementById('fields-body');
+  tbody.innerHTML = '';
+  window.currentFields.forEach(([label, value]) => {
+    const tr = document.createElement('tr');
+    const displayVal = value.length > 60 ? value.slice(0, 57) + '...' : value;
+    tr.innerHTML = `<td>${label}</td><td>${displayVal}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  // Feedback styling
+  const rawFeedback = result.feedback || '';
+  // Simple format: make BEFORE/AFTER/WHY bold
+  const formattedFeedback = rawFeedback
+    .replace(/BEFORE:/g, '<strong>BEFORE:</strong>')
+    .replace(/AFTER:/g, '<br><strong>AFTER:</strong>')
+    .replace(/WHY:/g, '<br><strong>WHY:</strong>')
+    .replace(/\n  -/g, '<br><br>  -');
+  document.getElementById('feedback-box').innerHTML = formattedFeedback;
+
+  // Enable decision buttons
+  if (result.filled_ok) {
+    document.getElementById('submit-btn').disabled = false;
+    document.getElementById('edit-btn').disabled = false;
+    document.getElementById('replace-btn').disabled = false;
+    document.getElementById('cancel-btn').disabled = false;
+  }
+}
+
+async function submitApp() {
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('cancel-btn').disabled = true;
+  try {
+    const res = await fetch(`${API}/submit`, { method: 'POST' });
+    const { ok } = await res.json();
+    document.getElementById('decision-msg').textContent = ok
+      ? 'Application submitted.' : 'Submission failed — check the form.';
+  } catch {
+    document.getElementById('decision-msg').textContent = 'Error contacting server.';
+  }
+}
+
+function cancelApp() {
+  fetch(`${API}/cancel`, { method: 'POST' }).catch(() => {});
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('cancel-btn').disabled = true;
+  document.getElementById('decision-msg').textContent = 'Cancelled — application not submitted.';
+}
+
+// ── Overlay controls ──────────────────────────────────────────────────────────
+function openResults(title) {
+  document.getElementById('results-title').textContent = title || 'Agent Results';
+  document.getElementById('results-overlay').classList.add('open');
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('edit-btn').disabled = true;
+  document.getElementById('replace-btn').disabled = true;
+  document.getElementById('cancel-btn').disabled = true;
+  document.getElementById('decision-msg').textContent = '';
+  document.getElementById('fields-body').innerHTML = '';
+  document.getElementById('feedback-box').innerHTML = '';
+}
+function closeResults() {
+  document.getElementById('results-overlay').classList.remove('open');
+}
+
+// ── Edit Field / Replace Resume ─────────────────────────────────────────────
+function openEditModal() {
+  const select = document.getElementById('edit-field-name');
+  select.innerHTML = '';
+  if (window.currentFields) {
+    window.currentFields.forEach(([label, value]) => {
+      const opt = document.createElement('option');
+      opt.value = label;
+      opt.textContent = label;
+      select.appendChild(opt);
+    });
+  }
+  document.getElementById('edit-field-value').value = '';
+  document.getElementById('edit-overlay').style.display = 'flex';
+}
+function closeEditModal() {
+  document.getElementById('edit-overlay').style.display = 'none';
+}
+async function submitEdit() {
+  const name = document.getElementById('edit-field-name').value.trim();
+  const val = document.getElementById('edit-field-value').value.trim();
+  if (!name || !val) return;
+  
+  const btn = document.getElementById('edit-btn');
+  btn.textContent = 'Updating...';
+  closeEditModal();
+  
+  const form = new FormData();
+  form.append('label', name);
+  form.append('new_value', val);
+  
+  try {
+    const res = await fetch(`${API}/edit_field`, { method: 'POST', body: form });
+    const { ok, msg, fields } = await res.json();
+    if (ok && fields) {
+      window.currentFields = fields;
+      // Refresh fields table
+      const tbody = document.getElementById('fields-body');
+      tbody.innerHTML = '';
+      fields.forEach(([label, value]) => {
+        const tr = document.createElement('tr');
+        const displayVal = value.length > 60 ? value.slice(0, 57) + '...' : value;
+        tr.innerHTML = `<td>${label}</td><td>${displayVal}</td>`;
+        tbody.appendChild(tr);
+      });
+      document.getElementById('decision-msg').textContent = 'Field updated.';
+    } else {
+      document.getElementById('decision-msg').textContent = msg || 'Failed to update field.';
+    }
+  } catch (err) {
+    document.getElementById('decision-msg').textContent = 'Error updating field.';
+  }
+  btn.textContent = 'Edit Fields';
+}
+
+function openReplaceModal() {
+  document.getElementById('replace-overlay').style.display = 'flex';
+}
+function closeReplaceModal() {
+  document.getElementById('replace-overlay').style.display = 'none';
+}
+async function submitReplace() {
+  const fileInput = document.getElementById('replace-resume-input');
+  if (!fileInput.files[0]) return;
+  
+  const btn = document.getElementById('replace-btn');
+  btn.textContent = 'Replacing...';
+  closeReplaceModal();
+  
+  const form = new FormData();
+  form.append('resume', fileInput.files[0]);
+  
+  try {
+    const res = await fetch(`${API}/replace_resume`, { method: 'POST', body: form });
+    const { ok, msg, fields } = await res.json();
+    if (ok && fields) {
+      window.currentFields = fields;
+      // Refresh fields table
+      const tbody = document.getElementById('fields-body');
+      tbody.innerHTML = '';
+      fields.forEach(([label, value]) => {
+        const tr = document.createElement('tr');
+        const displayVal = value.length > 60 ? value.slice(0, 57) + '...' : value;
+        tr.innerHTML = `<td>${label}</td><td>${displayVal}</td>`;
+        tbody.appendChild(tr);
+      });
+      document.getElementById('decision-msg').textContent = 'Resume replaced successfully.';
+    } else {
+      document.getElementById('decision-msg').textContent = msg || 'Failed to replace resume.';
+    }
+  } catch (err) {
+    document.getElementById('decision-msg').textContent = 'Error replacing resume.';
+  }
+  btn.textContent = 'Replace Resume';
+}
+
+function openHow() {
+  document.getElementById('how-overlay').classList.add('open');
+}
+function closeHow(e) {
+  if (!e || e.target === document.getElementById('how-overlay'))
+    document.getElementById('how-overlay').classList.remove('open');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+resume_path: /path/to/resume.pdf
+personal:
+  first_name: John
+  last_name: Doe
+  email: john.doe@example.com
+  phone: 555-555-5555
+  location: New York, NY
+  linkedin_url: https://www.linkedin.com/in/johndoe/
+  github_url: 'https://github.com/johndoe'
+  portfolio_url: ''
+  pronouns: He/Him
+current:
+  company: Tech Corp
+  title: Software Engineer
+  notice_period: 2 weeks
+  open_to_start: immediately
+work_authorization:
+  canada: false
+  requires_sponsorship: false
+  citizenship: US Citizen
+compensation:
+  desired_salary_cad: '100000'
+  salary_range_cad: 100000-120000
+  open_to_negotiate: true
+preferences:
+  work_type: hybrid
+  willing_to_relocate: false
+  preferred_locations:
+  - New York, NY
+eeo:
+  gender: Male
+  race_ethnicity: White
+  hispanic_latino: 'No'
+  veteran_status: I don't wish to answer
+  disability_status: I don't wish to answer
+sms_consent: true
+narrative:
+  headline: Software Engineer passionate about automation
+work_history:
+- company: Tech Corp
+  title: Software Engineer
+  start_date: '2020.01'
+  end_date: Present
+  location: New York, NY
+  description: Built things and automated stuff.
+education:
+- institution: University of Technology
+  degree: Bachelor of Science
+  field: Computer Science
+  graduation_year: '2019.05'
+  location: New York, NY
+skills:
+  technical:
+  - Python
+  - JavaScript
